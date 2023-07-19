@@ -25,30 +25,38 @@ def album_download(client: Client, media: dict, folder: str ="") -> list[str]:
 if __name__ == "__main__":
     import json
     
-    cl = Client()
-
+    TARGET_USERNAME = "influencersinthewild"
+    
     # Set proxy
+    cl = Client()
     load_dotenv()
     cl.set_proxy(f"http://scrapeops:{environ.get('API_KEY')}@proxy.scrapeops.io:5353")
 
-    # Read target user info json
-    with open("output/renebaebae_profile.json", "r") as f:
-         target_user_info = json.load(f)
+    # Loads target user info data
+    try:
+        # Read target user info from existing json
+        with open(f"output/{TARGET_USERNAME}_profile.json", "r") as f:
+            target_user_info = json.load(f)
+    except FileNotFoundError:
+        # Get and write target user info into new json file
+        with open(f"output/{TARGET_USERNAME}_profile.json", "w") as f:
+            target_user_info = cl.user_info_by_username(TARGET_USERNAME).dict()
+            f.write(json.dumps(target_user_info, indent=4))
 
-    # Get user posts
-    posts = cl.user_medias(target_user_info["pk"], amount=50)
+    # Get user posts, "amount=0" means scrape all post
+    posts = cl.user_medias(target_user_info["pk"], amount=0)
     
     # Data formatting into json
     posts_dict = []
     for post in posts:
-         post = post.dict()
-         post["taken_at"] = post["taken_at"].isoformat()
-         posts_dict.append(post)
+        post = post.dict()
+        post["taken_at"] = post["taken_at"].isoformat()
+        posts_dict.append(post)
 
     posts_json = json.dumps(posts_dict, indent=4)
 
     # Write into json file
-    with open("output/renebaebae_post.json", "w") as f:
-         f.write(posts_json)
+    with open(f"output/{TARGET_USERNAME}_post.json", "w") as f:
+        f.write(posts_json)
         
     
