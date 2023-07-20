@@ -1,6 +1,6 @@
 from instagrapi import Client
 from dotenv import load_dotenv
-from os import environ
+from os import environ, path, makedirs
 
 def album_download(client: Client, media: dict, folder: str ="") -> list[str]:
 
@@ -35,11 +35,13 @@ if __name__ == "__main__":
     # Loads target user info data
     try:
         # Read target user info from existing json
-        with open(f"output/{TARGET_USERNAME}_profile.json", "r") as f:
+        with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_profile.json", "r") as f:
             target_user_info = json.load(f)
     except FileNotFoundError:
         # Get and write target user info into new json file
-        with open(f"output/{TARGET_USERNAME}_profile.json", "w") as f:
+        if not path.exists(rf"output/{TARGET_USERNAME}/"):
+            makedirs(rf"output/{TARGET_USERNAME}/")
+        with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_profile.json", "w") as f:
             target_user_info = cl.user_info_by_username(TARGET_USERNAME).dict()
             f.write(json.dumps(target_user_info, indent=4))
 
@@ -56,7 +58,7 @@ if __name__ == "__main__":
     posts_json = json.dumps(posts_dict, indent=4)
 
     # Write into json file
-    with open(f"output/{TARGET_USERNAME}_post.json", "w") as f:
+    with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_post.json", "w") as f:
         f.write(posts_json)
         
     
