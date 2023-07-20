@@ -1,7 +1,41 @@
+import logging
+from logging import config
 from instagrapi import Client
 from instagrapi.exceptions import ClientBadRequestError, ClientConnectionError, ClientForbiddenError, GenericRequestError, ClientGraphqlError
 from dotenv import load_dotenv, set_key
 from os import environ, path, makedirs
+
+# Log configuration dict
+log_config = {
+    "version":1,
+    "root":{
+        "handlers" : ["console", "file"],
+        "level": "DEBUG"
+    },
+    "handlers":{
+        "console":{
+            "formatter": "std_out",
+            "class": "logging.StreamHandler",
+            "level": "DEBUG"
+        },
+        "file":{
+            "formatter":"std_out",
+            "class":"logging.FileHandler",
+            "level":"DEBUG",
+            "filename":"main.log"
+        }
+    },
+    "formatters":{
+        "std_out": {
+            "format": "%(asctime)s -- %(levelname)s -- %(module)s -- %(message)s",
+        }
+    },
+}
+config.dictConfig(log_config)
+
+# Create Logger
+logger = logging.getLogger(__name__)
+
 
 def album_download(client: Client, media: dict, folder: str ="") -> list[str]:
 
@@ -35,24 +69,31 @@ if __name__ == "__main__":
     cl.set_proxy(f"http://scrapeops:{environ.get('API_KEY')}@proxy.scrapeops.io:5353")
 
     # Loads target user info data
+    target_user_dir_path = f"output/{TARGET_USERNAME}/"
+    profile_file_path = f"{target_user_dir_path}{TARGET_USERNAME}_profile.json"
     try:
         # Read target user info from existing json
-        with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_profile.json", "r") as f:
+        with open(rf"{profile_file_path}", "r") as f:
             target_user_info = json.load(f)
+            logger.info("Profile data found, using saved data")
     except FileNotFoundError:
+        logger.info("No profile data found, commencing new request of profile info")
         # Create directory if not exist
-        if not path.exists(rf"output/{TARGET_USERNAME}/"):
-            makedirs(rf"output/{TARGET_USERNAME}/")
+        if not path.exists(rf"{target_user_dir_path}"):
+            makedirs(rf"{target_user_dir_path}")
         # Get and write target user info into new json file
-        with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_profile.json", "w") as f:
+        with open(rf"{profile_file_path}", "w") as f:
             target_user_info = cl.user_info_by_username(TARGET_USERNAME).dict()
             f.write(json.dumps(target_user_info, indent=4))
+            logger.info(f"New profile data saved: '{profile_file_path}'")
 
     # Check if there are stored end_cursor to resume
     try:
         end_cursor = environ.get(rf"{TARGET_USERNAME}_END_CURSOR")
+        logger.info("Found 'end_cursor' in cache, resuming scrape process")
     except KeyError:
         end_cursor = ""
+        logger.info("Not found 'end_cursor' data, initializing scrape process")
 
     # Do scraping process
     posts = list()
@@ -61,15 +102,20 @@ if __name__ == "__main__":
             # Get user posts, "amount=0" means scrape all post
             page, end_cursor = cl.user_medias_paginated(target_user_info["pk"], amount=0, end_cursor=end_cursor)
             posts.extend(page)
+            logger.info(f"Process: successfully scrape {len(posts)} out of {TARGET_POST_NUMBER} targeted items")
         # Handle connection error which may raise due to proxy being blocked
-        except (ClientBadRequestError, ClientConnectionError, ClientForbiddenError, GenericRequestError, ClientGraphqlError) as e:
-            print(e)
+        except (ClientBadRequestError, ClientConnectionError, ClientForbiddenError, GenericRequestError, ClientGraphqlError):
             # Store the latest end_cursor to resume
-            set_key(".env", rf"{TARGET_USERNAME}_END_CURSOR", rf"{end_cursor}")
+            logger.exception(f"Scraping request failed, connection issue")
+            if end_cursor:
+                set_key(".env", rf"{TARGET_USERNAME}_END_CURSOR", rf"{end_cursor}")
+                logger.info(f"Process Failed: scraped {len(posts)} out of {TARGET_POST_NUMBER} targeted items")
+                logger.info(f"Process Failed: caching latest 'end_cursor':'{end_cursor}'")
             break
         
         # Quit loop if reach end of page or fulfilled scraping target
         if not end_cursor or len(posts) == TARGET_POST_NUMBER:
+            logger.info(f"Process Finished: successfully scraped {len(posts)} items (target: {TARGET_POST_NUMBER})")
             break
     
     # Data formatting into json
@@ -82,6 +128,7 @@ if __name__ == "__main__":
     posts_json = json.dumps(posts_dict, indent=4)
 
     # Write into json file
-    with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_post.json", "a") as f:
+    with open(rf"{target_user_dir_path}{TARGET_USERNAME}_post.json", "a") as f:
         f.write(posts_json)
+        logger.info(f"Saved new scraped data: '{target_user_dir_path}{TARGET_USERNAME}_post.json'")
     
