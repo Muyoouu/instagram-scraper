@@ -1,5 +1,6 @@
 from instagrapi import Client
-from dotenv import load_dotenv
+from instagrapi.exceptions import ClientBadRequestError, ClientConnectionError, ClientForbiddenError, GenericRequestError, ClientGraphqlError
+from dotenv import load_dotenv, set_key
 from os import environ, path, makedirs
 
 def album_download(client: Client, media: dict, folder: str ="") -> list[str]:
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     import json
     
     TARGET_USERNAME = "influencersinthewild"
+    TARGET_POST_NUMBER = 100
     
     # Set proxy
     cl = Client()
@@ -46,8 +48,29 @@ if __name__ == "__main__":
             target_user_info = cl.user_info_by_username(TARGET_USERNAME).dict()
             f.write(json.dumps(target_user_info, indent=4))
 
-    # Get user posts, "amount=0" means scrape all post
-    posts = cl.user_medias(target_user_info["pk"], amount=0)
+    # Check if there are stored end_cursor to resume
+    try:
+        end_cursor = environ.get(rf"{TARGET_USERNAME}_END_CURSOR")
+    except KeyError:
+        end_cursor = ""
+
+    # Do scraping process
+    posts = list()
+    while True:
+        try:
+            # Get user posts, "amount=0" means scrape all post
+            page, end_cursor = cl.user_medias_paginated(target_user_info["pk"], amount=0, end_cursor=end_cursor)
+            posts.extend(page)
+        # Handle connection error which may raise due to proxy being blocked
+        except (ClientBadRequestError, ClientConnectionError, ClientForbiddenError, GenericRequestError, ClientGraphqlError) as e:
+            print(e)
+            # Store the latest end_cursor to resume
+            set_key(".env", rf"{TARGET_USERNAME}_END_CURSOR", rf"{end_cursor}")
+            break
+        
+        # Quit loop if reach end of page or fulfilled scraping target
+        if not end_cursor or len(posts) == TARGET_POST_NUMBER:
+            break
     
     # Data formatting into json
     posts_dict = []
@@ -59,7 +82,6 @@ if __name__ == "__main__":
     posts_json = json.dumps(posts_dict, indent=4)
 
     # Write into json file
-    with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_post.json", "w") as f:
+    with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_post.json", "a") as f:
         f.write(posts_json)
-        
     
