@@ -38,9 +38,10 @@ if __name__ == "__main__":
         with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_profile.json", "r") as f:
             target_user_info = json.load(f)
     except FileNotFoundError:
-        # Get and write target user info into new json file
+        # Create directory if not exist
         if not path.exists(rf"output/{TARGET_USERNAME}/"):
             makedirs(rf"output/{TARGET_USERNAME}/")
+        # Get and write target user info into new json file
         with open(rf"output/{TARGET_USERNAME}/{TARGET_USERNAME}_profile.json", "w") as f:
             target_user_info = cl.user_info_by_username(TARGET_USERNAME).dict()
             f.write(json.dumps(target_user_info, indent=4))
