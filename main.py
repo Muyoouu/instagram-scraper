@@ -88,10 +88,10 @@ if __name__ == "__main__":
             logger.info(f"New profile data saved: '{profile_file_path}'")
 
     # Check if there are stored end_cursor to resume
-    try:
-        end_cursor = environ.get(rf"{TARGET_USERNAME}_END_CURSOR")
+    end_cursor = environ.get(rf"{TARGET_USERNAME}_END_CURSOR")
+    if end_cursor:
         logger.info("Found 'end_cursor' in cache, resuming scrape process")
-    except KeyError:
+    else:
         end_cursor = ""
         logger.info("Not found 'end_cursor' data, initializing scrape process")
 
