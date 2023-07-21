@@ -75,9 +75,9 @@ if __name__ == "__main__":
         # Read target user info from existing json
         with open(rf"{profile_file_path}", "r") as f:
             target_user_info = json.load(f)
-            logger.info("Profile data found, using saved data")
+            logger.info(f"Profile data of {target_user_info['username']} found, using saved data")
     except FileNotFoundError:
-        logger.info("No profile data found, commencing new request of profile info")
+        logger.info(f"No profile data found, commencing new request of {TARGET_USERNAME} profile info")
         # Create directory if not exist
         if not path.exists(rf"{target_user_dir_path}"):
             makedirs(rf"{target_user_dir_path}")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         logger.info(f"Found 'end_cursor': '{end_cursor}' in cache, resuming latest scrape process")
     else:
         end_cursor = ""
-        logger.info("Not found 'end_cursor' data, initializing scrape process")
+        logger.info("Not found 'end_cursor' data, initializing new scrape process")
 
     # Do scraping process
     posts = list()
