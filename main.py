@@ -90,7 +90,7 @@ if __name__ == "__main__":
     # Check if there are stored end_cursor to resume
     end_cursor = environ.get(rf"{TARGET_USERNAME}_END_CURSOR")
     if end_cursor:
-        logger.info("Found 'end_cursor' in cache, resuming scrape process")
+        logger.info(f"Found 'end_cursor': '{end_cursor}' in cache, resuming latest scrape process")
     else:
         end_cursor = ""
         logger.info("Not found 'end_cursor' data, initializing scrape process")
