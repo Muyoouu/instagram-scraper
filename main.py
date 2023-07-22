@@ -100,13 +100,17 @@ if __name__ == "__main__":
 
     # Check if there are stored end_cursor to resume
     end_cursor = environ.get(rf"{TARGET_USERNAME}_END_CURSOR")
+    # Empty var for existing scraped items
+    exist_scrape_items = list()
     if end_cursor:
         logger.info(f"Found 'end_cursor': '{end_cursor}' in cache, resuming latest scrape process")
         try:
             with open(rf"{target_user_dir_path}{TARGET_USERNAME}_post.json", "r") as f:
+                # Load existing scraped data
                 exist_scrape_items = json.load(f)
                 # Adjust target items, consider exist scraped items
                 target_item_numbers = min(target_user_info["media_count"] - len(exist_scrape_items), target_item_numbers)
+                
                 logger.info(f"User '{TARGET_USERNAME}' total medias: {target_user_info['media_count']} items")
                 logger.info(f"Exist scraped data: {len(exist_scrape_items)} items inside '{target_user_dir_path}{TARGET_USERNAME}_post.json'")
                 logger.info(f"Processing to scrape next {target_item_numbers} items")
@@ -150,15 +154,18 @@ if __name__ == "__main__":
             break
     
     # Data formatting into json
-    posts_dict = []
+    posts_dict = list()
     for post in posts:
         post = post.dict()
         post["taken_at"] = post["taken_at"].isoformat()
         posts_dict.append(post)
-    posts_json = json.dumps(posts_dict, indent=4)
+    
+    # Merge new scrape data with exist scraped data from file
+    if exist_scrape_items:
+        posts_dict.extend(exist_scrape_items)
 
     # Write into json file
-    with open(rf"{target_user_dir_path}{TARGET_USERNAME}_post.json", "a") as f:
-        f.write(posts_json)
+    with open(rf"{target_user_dir_path}{TARGET_USERNAME}_post.json", "w") as f:
+        json.dump(posts_dict, f, indent=4)
         logger.info(f"Saving new scraped data: '{target_user_dir_path}{TARGET_USERNAME}_post.json'")
     
