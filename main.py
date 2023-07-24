@@ -64,7 +64,7 @@ if __name__ == "__main__":
     TARGET_USERNAME = "influencersinthewild"
     # Set number of pages to scrape (non-negative integer), each page equals 50 items
     # Set to 0 to scrape all items in a profile
-    TARGET_PAGE_NUMBERS = 2
+    TARGET_PAGE_NUMBERS = 0
     
     # Set proxy
     cl = Client()
@@ -126,6 +126,8 @@ if __name__ == "__main__":
     posts = list()
     while True:
         try:
+            # For backup purpose
+            previous_end_cursor = end_cursor
             # Get user posts, "amount=0" means scrape all post
             page, end_cursor = cl.user_medias_paginated(target_user_info["pk"], amount=0, end_cursor=end_cursor)
             posts.extend(page)
@@ -143,9 +145,13 @@ if __name__ == "__main__":
         # Quit loop if reach end of page or fulfilled scraping target
         if not end_cursor:
             logger.info(f"Process Finished: END OF PAGE, successfully scraped {len(posts)} items (target: {target_item_numbers})")
-            if environ.get(rf"{TARGET_USERNAME}_END_CURSOR"):
-                unset_key(".env", rf"{TARGET_USERNAME}_END_CURSOR", rf"{end_cursor}")
-                logger.info(f"Removing '{TARGET_USERNAME}_END_CURSOR' from cache")
+            if previous_end_cursor:
+                set_key(".env", rf"{TARGET_USERNAME}_END_CURSOR", rf"{previous_end_cursor}")
+                logger.info(f"Saving 'previous_end_cursor': '{previous_end_cursor}' in cache")
+            else:
+                if environ.get(rf"{TARGET_USERNAME}_END_CURSOR"):
+                    unset_key(".env", rf"{TARGET_USERNAME}_END_CURSOR")
+                    logger.info(f"Deleting '{TARGET_USERNAME}_END_CURSOR' from cache")
             break
         if len(posts) >= target_item_numbers:
             logger.info(f"Process Finished: REACH TARGET, successfully scraped {len(posts)} items (target: {target_item_numbers})")
