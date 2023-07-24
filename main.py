@@ -77,7 +77,7 @@ if __name__ == "__main__":
         import json
         
         # Set IG Username to scrape
-        TARGET_USERNAME = "influencersinthewild"
+        TARGET_USERNAME = "renebaebae"
         # Set number of pages to scrape (non-negative integer), each page equals 50 items
         # Set to 0 to scrape all items in a profile
         TARGET_PAGE_NUMBERS = 0
@@ -86,6 +86,7 @@ if __name__ == "__main__":
         cl = Client()
         load_dotenv()
         cl.set_proxy(f"http://scrapeops:{environ.get('API_KEY')}@proxy.scrapeops.io:5353")
+        proxy_usage_counter = 0
 
         # Loads target user info data
         target_user_dir_path = f"output/{TARGET_USERNAME}/"
@@ -105,6 +106,7 @@ if __name__ == "__main__":
                 target_user_info = cl.user_info_by_username(TARGET_USERNAME).dict()
                 f.write(json.dumps(target_user_info, indent=4))
                 logger.info(f"New profile data saved: '{profile_file_path}'")
+            proxy_usage_counter += 1
 
 
         # Translate pages to items (each page have 50 items)
@@ -148,6 +150,7 @@ if __name__ == "__main__":
                 page, end_cursor = cl.user_medias_paginated(target_user_info["pk"], amount=0, end_cursor=end_cursor)
                 posts.extend(page)
                 logger.info(f"Process: successfully scrape {len(posts)} out of {target_item_numbers} targeted items")
+                proxy_usage_counter += 1
             # Handle connection error which may raise due to proxy being blocked
             except (ClientBadRequestError, ClientConnectionError, ClientForbiddenError, GenericRequestError, ClientGraphqlError):
                 # Store the latest end_cursor to resume
@@ -190,4 +193,7 @@ if __name__ == "__main__":
         with open(rf"{target_user_dir_path}{TARGET_USERNAME}_post.json", "w") as f:
             json.dump(posts_dict, f, indent=4)
             logger.info(f"Saving new scraped data: '{target_user_dir_path}{TARGET_USERNAME}_post.json'")
+
+        logger.info(f"Proxy usage count: {proxy_usage_counter} times")
+
     
