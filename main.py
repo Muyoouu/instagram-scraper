@@ -77,7 +77,7 @@ if __name__ == "__main__":
         import json
         
         # Set IG Username to scrape
-        TARGET_USERNAME = "renebaebae"
+        TARGET_USERNAME = "influencersinthewild"
         # Set number of pages to scrape (non-negative integer), each page equals 50 items
         # Set to 0 to scrape all items in a profile
         TARGET_PAGE_NUMBERS = 0
