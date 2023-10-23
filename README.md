@@ -14,11 +14,11 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-<img src="img/Logo.png" width="20%" height="20%">
-<h2 align="center">google-scraper</h2>
+<img src="img/instagram_scraper_logo.png" width="20%" height="20%">
+<h2 align="center">instagram-scraper</h2>
 
   <p align="center">
-    Python and Scrapy-based Google's search result scraping software
+    Python-based Instagram's data scraping scripts
     <br />
     <br />
 </div>
@@ -27,52 +27,25 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Scraping data from Google search results can be challenging due to two main obstacles. Firstly, Google's search results are dynamic and constantly changing, making it difficult to extract accurate and reliable data consistently. Secondly, Google has robust bot detection measures in place, which pose a significant obstacle to gathering data from their website.
-To conquer these challenges, a specialized web scraping software solution has been developed with the following features:
+This project focuses on scraping data from Instagram profiles efficiently while overcoming challenges specific to Instagram data scraping.
 
-1. **Dynamic Web Page Navigation:** The software is equipped with intelligent algorithms that effortlessly navigate through Google's dynamic web pages, ensuring accurate data collection regardless of how frequently the pages change.
+To ensure successful Instagram data scraping, I implemented an effective solution with three key strategies:
 
-2. **Bypassing Bot Detection Measures:** A sophisticated proxy network has been integrated into the software to ensure that your scraping activities remain undetected as a bot by Google, allowing you to gather data seamlessly and without interruptions.
+1. **Proxy Network Integration:** Utilizing a proxy network service to distribute scraping requests across various IP addresses, ensuring uninterrupted data collection while bypassing rate limiting and IP blocking.
 
-With this web scraping software, you can overcome the hurdles of scraping Google search results and extract the data you need efficiently and reliably..
+2. **Dynamic Web Element Handling:** Employing advanced web scraping techniques, including JavaScript rendering and AJAX handling, to interact with dynamic elements and obtain accurate data.
+
+3. **Rate Limit Management:** Implementing rate-limiting strategies and optimizing request intervals to adhere to Instagram's rate limits, ensuring efficient data collection and minimizing the risk of detection.
+
+For a complete project demo, please visit the [`Instagram Scraper Notion Page`](https://muyoouu.notion.site/Instagram-s-Data-Scraping-b9e1694801a7429bb0c74c8b0c8f23c6?pvs=4).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 ### Built With
 
-* [![Python][Python.py]][Python-url]  
-* [![Scrapy][Scrapy]][Scrapy-url]
-* [![Pandas][Pandas]][Pandas-url]
-
+[![Python][Python.py]][Python-url] 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-1. Activate Virtual Environment
-   ```bash
-   source env/bin/activate
-   ```
-2. Move inside the google_scraper/ directory
-   ```bash
-   cd google_scraper
-   ```
-3. Run the scrapy spider ("google_serp") to start scraping, specify the output file (JSON or CSV)
-   ```bash
-   scrapy crawl google_serp -o output/output.json
-   ```
-4. Run the analysis script
-   ```bash
-   python3 keyword_analysis.py
-   ```
-
-For project's complete demo see this [`Google Scraper Notion Page`](https://muyoouu.notion.site/Accurate-and-Anti-Bot-Google-Scraper-Built-with-Python-and-Scrapy-8d5a29a126ab402bb874551abf572eef?pvs=4)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- LICENSE -->
 ## License
@@ -87,24 +60,11 @@ Distributed under the MIT License. See [`LICENSE.txt`](LICENSE.txt) for more inf
 
 Musa Yohanes - musayohanes00@gmail.com
 
-Project Link: [https://github.com/Muyoouu/google-scraper](https://github.com/Muyoouu/google-scraper)
+Project Link: [https://github.com/Muyoouu/instagram-scraper](https://github.com/Muyoouu/instagram-scraper)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* Credits to the README file template provided by [Best-README-Template](https://github.com/othneildrew/Best-README-Template), very helpful!
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [Python.py]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
 [Python-url]: https://www.python.org/
-[Scrapy]: https://img.shields.io/badge/scrapy-00a86b?style=for-the-badge&logo=python&logoColor=ffdd54
-[Scrapy-url]: https://scrapy.org/
-[Pandas]: https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white
-[Pandas-url]: https://pandas.pydata.org/docs/
