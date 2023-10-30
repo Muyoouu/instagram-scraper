@@ -85,7 +85,7 @@ if __name__ == "__main__":
         # Set proxy
         cl = Client()
         load_dotenv()
-        cl.set_proxy(f"http://scrapeops:{environ.get('API_KEY')}@proxy.scrapeops.io:5353")
+        cl.set_proxy(f"http://scraperapi:{environ.get('SCRAPERAPI_API_KEY')}@proxy-server.scraperapi.com:8001")
         proxy_usage_counter = 0
 
         # Loads target user info data
