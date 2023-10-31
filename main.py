@@ -77,7 +77,7 @@ if __name__ == "__main__":
         import json
         
         # Set IG Username to scrape
-        TARGET_USERNAME = "influencersinthewild"
+        TARGET_USERNAME = "noonarosa"
         # Set number of pages to scrape (non-negative integer), each page equals 50 items
         # Set to 0 to scrape all items in a profile
         TARGET_PAGE_NUMBERS = 0
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         # Set proxy
         cl = Client()
         load_dotenv()
-        cl.set_proxy(f"http://scraperapi:{environ.get('SCRAPERAPI_API_KEY')}@proxy-server.scraperapi.com:8001")
+        cl.set_proxy(f"http://scrapeops:{environ.get('SCRAPEOPS_API_KEY')}@proxy.scrapeops.io:5353")
         proxy_usage_counter = 0
 
         # Loads target user info data
