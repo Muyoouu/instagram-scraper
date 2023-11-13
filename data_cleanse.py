@@ -31,6 +31,7 @@ if __name__ == "__main__":
         date_time_data = datetime.fromisoformat(post["taken_at"])
         date_time_data = date_time_data.replace(tzinfo=None)
         select_data["date_time"] = excel_date(date_time_data)
+        select_data["hour_of_the_day"] = date_time_data.strftime("%-I %p")
         select_data["day_of_the_week"] = date_time_data.strftime("%A")
 
         # Media type and URL extract
