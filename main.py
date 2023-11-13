@@ -77,10 +77,13 @@ if __name__ == "__main__":
         import json
         
         # Set IG Username to scrape
-        TARGET_USERNAME = "noonarosa"
+        TARGET_USERNAME = ""
+        if not TARGET_USERNAME:
+            raise ValueError("No value in TARGET_USERNAME, type the target username in the script")
+
         # Set number of pages to scrape (non-negative integer), each page equals 50 items
         # Set to 0 to scrape all items in a profile
-        TARGET_PAGE_NUMBERS = 0
+        TARGET_PAGE_NUMBERS = 1
         
         # Set proxy
         cl = Client()
