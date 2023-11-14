@@ -27,17 +27,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project focuses on scraping data from Instagram profiles efficiently while overcoming challenges specific to Instagram data scraping.
+This script is designed for scraping data from Instagram public profiles using the [Instagrapi](https://github.com/subzeroid/instagrapi) module.
 
-To ensure successful Instagram data scraping, I implemented an effective solution with three key strategies:
+The Instagrapi Python module only handles the API requests, so I've added additional features to ensure its functionality:
+- Parsing and storing the scraped data in JSON format
+- Setting a proxy (I used [ScrapeOps](https://scrapeops.io/) service, but you can use any proxy that works)
+- Log recordings to track the process and identify bugs
+- Capability to resume unfinished scraping processes
+- Optional: Use the [data_cleanse.py](data_cleanse.py) script for parsing JSON into a CSV file in Excel-friendly data format
 
-1. **Proxy Network Integration:** Utilizing a proxy network service to distribute scraping requests across various IP addresses, ensuring uninterrupted data collection while bypassing rate limiting and IP blocking.
-
-2. **Dynamic Web Element Handling:** Employing advanced web scraping techniques, including JavaScript rendering and AJAX handling, to interact with dynamic elements and obtain accurate data.
-
-3. **Rate Limit Management:** Implementing rate-limiting strategies and optimizing request intervals to adhere to Instagram's rate limits, ensuring efficient data collection and minimizing the risk of detection.
-
-For a complete project demo, please visit the [`Instagram Scraper Notion Page`](https://muyoouu.notion.site/Instagram-s-Data-Scraping-b9e1694801a7429bb0c74c8b0c8f23c6?pvs=4).
+For a scraping demo, please visit the [`Medium Story: How to Scrape and Analyze Instagram Influencer Engagements`](https://medium.com/@musayohanes00/how-to-scrape-and-analyze-instagram-influencer-engagements-ae01197c652b).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
